@@ -21,6 +21,15 @@
                 	}
             	     } ]
 		 }
-  }
+  },
+
+     "ElasticIPAssociation" : {
+        "Type": "AWS::EC2::EIPAssociation",
+        "Properties": {
+                "AllocationId": "eipalloc-ac7712c9",
+                "InstanceId":{ "Ref" : "MyFirstCloudFormationServer" }
+        }
+      }
+
  }
 }

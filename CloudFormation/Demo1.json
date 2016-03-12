@@ -21,6 +21,16 @@
                 	}
             	     } ]
 		 }
-  }
+      },
+      
+     "ElasticIPAssociation" : {
+      	"Type": "AWS::EC2::EIPAssociation",
+   	"Properties": {
+      		"AllocationId": "<change-it>",
+      		"EIP": "<change-it>",
+      		"InstanceId":{"Ref":"MyFirstCloudFormationServer"}
+	}
+      }	
+	
  }
 }
