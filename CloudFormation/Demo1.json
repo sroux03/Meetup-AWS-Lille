@@ -19,7 +19,7 @@
                 		"DeleteOnTermination" : "true",
                 		"VolumeSize" : "2"
                 	}
-            	     } ],
+            	     } ]
 		 }
   }
 }
