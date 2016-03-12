@@ -8,7 +8,7 @@
         	"InstanceType" : "t2.micro",
 	    	"SubnetId" : "subnet-c4f0e9b3",
        		"ImageId"  : "ami-e1398992",
-        	"SecurityGroupIds" : "sg-e2d9d486",
+        	"SecurityGroupIds" : ["sg-e2d9d486"],
 		    "Tags" : [{ "Key" : "Name", "Value" : "MyFirstCloudFormationServer" }, 
 			      { "Key" : "Rôle", "Value" : "TestServer" }, 
 			      { "Key" : "Zone", "Value" : "default" },{ "Key" : "VPC", "Value" : "default" }],
