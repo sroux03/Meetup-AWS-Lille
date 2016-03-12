@@ -1,0 +1,25 @@
+  "Resources": {
+    
+    "MyFirstCloudFormationServer" : {
+        "Type" : "AWS::EC2::Instance",
+        "Properties" : {
+	      	"KeyName" : "<change-it>",
+        	"InstanceType" : "t2.micro",
+	    	"SubnetId" : "<change-it>",
+       		"ImageId"  : "<change-it>",
+        	"SecurityGroupIds" : "<change-it>",
+		    "Tags" : [{ "Key" : "Name", "Value" : "MyFirstCloudFormationServer" }, 
+			      { "Key" : "Rôle", "Value" : "TestServer" }, 
+			      { "Key" : "Zone", "Value" : "default" },{ "Key" : "VPC", "Value" : "default" }],
+		    "BlockDeviceMappings" : [ {
+            		"DeviceName" : "/dev/sdb",
+                	"Ebs" : {
+                		"VolumeType" : "standard",
+                		"DeleteOnTermination" : "true",
+                		"VolumeSize" : "2"
+                	}
+            	     } ],
+		 }
+  }
+
+
