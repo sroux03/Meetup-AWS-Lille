@@ -1,3 +1,4 @@
+{
   "Resources": {
     
     "MyFirstCloudFormationServer" : {
@@ -9,7 +10,7 @@
        		"ImageId"  : "<change-it>",
         	"SecurityGroupIds" : "<change-it>",
 		    "Tags" : [{ "Key" : "Name", "Value" : "MyFirstCloudFormationServer" }, 
-			      { "Key" : "Rôle", "Value" : "TestServeur" }, 
+			      { "Key" : "Rôle", "Value" : "TestServer" }, 
 			      { "Key" : "Zone", "Value" : "default" },{ "Key" : "VPC", "Value" : "default" }],
 		    "BlockDeviceMappings" : [ {
             		"DeviceName" : "/dev/sdb",
@@ -21,5 +22,5 @@
             	     } ],
 		 }
   }
-
+}
 
