@@ -7,7 +7,7 @@
         	"Comment1" : "Get the motd file from S3 Bucket",
 		"AWS::CloudFormation::Init" : {
 			"configSets" : {
-				"RunInstallAndConfigure" : [ "Run","Install","Configure_node1" ]
+				"RunInstallAndConfigure" : [ "Run","Install","Configure_node0" ]
 			},
 			"Run" : {
 				"commands" : {
@@ -26,7 +26,7 @@
 					}
 				}
 			},
-			"Configure_node1" : {
+			"Configure_node0" : {
 				"commands" : {
               				"cp_index.html_from_s3" : {
                 				"command" : "wget -O //var/www/html/index.html https://s3-eu-west-1.amazonaws.com/meetupawslille/CloudFormation/node0_index.html"
@@ -43,14 +43,6 @@
         	"SecurityGroupIds" : ["sg-e2d9d486"],
 		"Tags" : [{ "Key" : "Name", "Value" : "MyFirstCloudFormationServer" }, { "Key" : "Rôle", "Value" : "TestServer" }, 
 			  { "Key" : "Zone", "Value" : "default" },{ "Key" : "VPC", "Value" : "default" }],
-		"BlockDeviceMappings" : [ {
-			"DeviceName" : "/dev/sdb",
-                	"Ebs" : {
-                		"VolumeType" : "standard",
-                		"DeleteOnTermination" : "true",
-                		"VolumeSize" : "2"
-                	}
-            	} ],
                 "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
                                                                           "#!/bin/bash -xe\n",
 									  "yum update -y aws-cfn-bootstrap\n",
