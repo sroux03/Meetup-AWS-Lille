@@ -30,6 +30,9 @@
 				"commands" : {
               				"cp_index.html_from_s3" : {
                 				"command" : "wget -O //var/www/html/index.html https://s3-eu-west-1.amazonaws.com/meetupawslille/CloudFormation/node0_index.html"
+					},
+					"start_httpd" : {
+						"command" : "service httpd start"
 					}
 				}
 			}		
