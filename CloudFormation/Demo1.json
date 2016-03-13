@@ -3,41 +3,62 @@
     
     "MyFirstCloudFormationServer" : {
         "Type" : "AWS::EC2::Instance",
-        "Properties" : {
-	      	"KeyName" : "<change-it>",
+        "Metadata" : {
+        	"Comment1" : "Get the motd file from S3 Bucket",
+		"AWS::CloudFormation::Init" : {
+			"configSets" : {
+				"Run" : [ "Run" ]
+			},
+			"Run" : {
+				"commands" : {
+              				"cp_motd_from_s3" : {
+                				"command" : "wget -O /etc/update-motd.d/99-footer https://s3-eu-west-1.amazonaws.com/meetupawslille/CloudFormation/motd"
+					},
+					"give_exec" : {
+                				"command" : "chmod 755 /etc/update-motd.d/99-footer"
+					}
+				}
+			}		
+		}
+	},
+	"Properties" : {
+		"KeyName" : "defaultSRX",
         	"InstanceType" : "t2.micro",
-	    	"SubnetId" : "<change-it>",
-       		"ImageId"  : "<change-it>",
-        	"SecurityGroupIds" : ["<change-it>"],
-		    "Tags" : [{ "Key" : "Name", "Value" : "MyFirstCloudFormationServer" }, 
-			      { "Key" : "Rôle", "Value" : "TestServer" }, 
-			      { "Key" : "Zone", "Value" : "default" },{ "Key" : "VPC", "Value" : "default" }],
-		    "BlockDeviceMappings" : [ {
-            		"DeviceName" : "/dev/sdb",
+	    	"SubnetId" : "<<CHANGE-ME>>",
+       		"ImageId"  : "<<CHANGE-ME>>",
+        	"SecurityGroupIds" : ["<<CHANGE-ME>>"],
+		"Tags" : [{ "Key" : "Name", "Value" : "MyFirstCloudFormationServer" }, { "Key" : "Rôle", "Value" : "TestServer" }, 
+			  { "Key" : "Zone", "Value" : "default" },{ "Key" : "VPC", "Value" : "default" }],
+		"BlockDeviceMappings" : [ {
+			"DeviceName" : "/dev/sdb",
                 	"Ebs" : {
                 		"VolumeType" : "standard",
                 		"DeleteOnTermination" : "true",
                 		"VolumeSize" : "2"
                 	}
-            	     } ],
-		 "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
- 									  "#!/bin/bash -xe\n",
-             								  "sudo wget -O /etc/motd https://s3-eu-west-1.amazonaws.com/meetupawslille/CloudFormation/motd"
-									 ]
-								    ]
-						     }
-			   	    } 
-		 }
-      },
-      
-     "ElasticIPAssociation" : {
-      	"Type": "AWS::EC2::EIPAssociation",
-   	"Properties": {
-      		"AllocationId": "<change-it>",
-      		"EIP": "<change-it>",
-      		"InstanceId":{"Ref":"MyFirstCloudFormationServer"}
+            	} ],
+                "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
+                                                                          "#!/bin/bash -xe\n",
+									  "yum update -y aws-cfn-bootstrap\n",
+									  "/opt/aws/bin/cfn-init ",
+          								  "         --stack ", { "Ref" : "AWS::StackName" },
+                                                                          "         --resource MyFirstCloudFormationServer",
+          								  "         --configsets Run ",
+          								  "         --region ", { "Ref" : "AWS::Region" }, "\n"
+							           ]]
+					}
+		}
 	}
-      }	
-	
+},
+
+	"ElasticIPAssociation" : {
+        	"Type": "AWS::EC2::EIPAssociation",
+        	"Properties": {
+                	"AllocationId": "<<CHANGE-ME>>",
+                	"InstanceId":{ "Ref" : "MyFirstCloudFormationServer" }
+        	}
+	}
+
  }
 }
+
