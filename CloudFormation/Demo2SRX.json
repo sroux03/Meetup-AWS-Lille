@@ -1,4 +1,6 @@
 {
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "This CF Template deploys an EC2 instance and installs apache2 on it.",
   "Resources": {
     
     "MyFirstCloudFormationServer" : {

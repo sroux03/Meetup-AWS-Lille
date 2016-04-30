@@ -24,11 +24,11 @@
 			}
 		},
 		"Properties" : {
-			"KeyName" : "defaultSRX",
+			"KeyName" : "<<CHANGE-ME>>",
         		"InstanceType" : "t2.micro",
-	    		"SubnetId" : "subnet-77829900",
+	    		"SubnetId" : "<<CHANGE-ME>>",
        			"ImageId"  : "ami-e1398992",
-        		"SecurityGroupIds" : ["sg-e2d9d486"],
+        		"SecurityGroupIds" : ["<<CHANGE-ME>>"],
 				"Tags" : [{ "Key" : "Name", "Value" : "MyFirstCloudFormationServer" }, { "Key" : "Rôle", "Value" : "TestServer" }, 
 			  		{ "Key" : "Zone", "Value" : "default" },{ "Key" : "VPC", "Value" : "default" }],
 				"BlockDeviceMappings" : [ {
@@ -56,7 +56,7 @@
 	"ElasticIPAssociation" : {
         	"Type": "AWS::EC2::EIPAssociation",
         	"Properties": {
-                	"AllocationId": "eipalloc-ac7712c9",
+                	"AllocationId": "<<CHANGE-ME>>",
                 	"InstanceId":{ "Ref" : "MyFirstCloudFormationServer" }
         	}
 	}

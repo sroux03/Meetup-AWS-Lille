@@ -34,11 +34,11 @@
 	 	  }
 		},
 		"Properties" : {
-			"KeyName" : "defaultSRX",
+			"KeyName" : "<<CHANGE-ME>>",
         	"InstanceType" : "t2.micro",
-	    	"SubnetId" : "subnet-77829900",
+	    	"SubnetId" : "<<CHANGE-ME>>",
        		"ImageId"  : "ami-e1398992",
-        	"SecurityGroupIds" : ["sg-e2d9d486"],
+        	"SecurityGroupIds" : ["<<CHANGE-ME>>"],
 			"Tags" : [{ "Key" : "Name", "Value" : "MyApacheNode1Server" }, { "Key" : "Role", "Value" : "TestServer" }, 
 			       { "Key" : "Zone", "Value" : "default" },{ "Key" : "VPC", "Value" : "default" }],
             "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
@@ -85,11 +85,11 @@
 			}
 	  },
 	  "Properties" : {
-		"KeyName" : "defaultSRX",
+		"KeyName" : "<<CHANGE-ME>>",
         "InstanceType" : "t2.micro",
-	    "SubnetId" : "subnet-77829900",
+	    "SubnetId" : "<<CHANGE-ME>>",
        	"ImageId"  : "ami-e1398992",
-        "SecurityGroupIds" : ["sg-e2d9d486"],
+        "SecurityGroupIds" : ["<<CHANGE-ME>>"],
 		"Tags" : [{ "Key" : "Name", "Value" : "MyApacheNode2Server" }, { "Key" : "Role", "Value" : "TestServer" }, 
 			       { "Key" : "Zone", "Value" : "default" },{ "Key" : "VPC", "Value" : "default" }],
         "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
@@ -109,7 +109,7 @@
 	"Type" : "AWS::EC2::SecurityGroup",
 	"Properties" : {
 		"GroupDescription" : "Security group for LB",
-		"VpcId" : "vpc-d1e290b4",
+		"VpcId" : "<<CHANGE-ME>>",
         "SecurityGroupIngress" : [ { "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80", "CidrIp" : "0.0.0.0/0"}],
 		"SecurityGroupEgress" : [ { "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80", "CidrIp" :  "0.0.0.0/0" }],
 		"Tags" : [{ "Key" : "Name", "Value" : "SG-ELB1" }, { "Key" : "Zone", "Value" : "default" },{ "Key" : "VPC", "Value" : "default" }]
@@ -121,7 +121,7 @@
  		"Properties" : {
    			"Scheme" : "internet-facing",
    			"SecurityGroups" : [ { "Ref" : "SGELB1" } ],
-			"Subnets" :  ["subnet-77829900"],
+			"Subnets" :  ["<<CHANGE-ME>>"],
    			"Instances" : [ { "Ref" : "MyApacheNode1Server" },{ "Ref" : "MyApacheNode2Server" }],
    			"LoadBalancerName" : "ELB1",
    			"Listeners" : [ {
@@ -142,14 +142,14 @@
     "ElasticIPAssociation1" : {
     	"Type": "AWS::EC2::EIPAssociation",
         "Properties": {
-        	"AllocationId": "eipalloc-ac7712c9",
+        	"AllocationId": "<<CHANGE-ME>>",
             "InstanceId":{ "Ref" : "MyApacheNode1Server" }
         }
 	},
 	"ElasticIPAssociation2" : {
     	"Type": "AWS::EC2::EIPAssociation",
         "Properties": {
-        	"AllocationId": "eipalloc-a48ff8c1",
+        	"AllocationId": "<<CHANGE-ME>>",
             "InstanceId":{ "Ref" : "MyApacheNode2Server" }
         }
 	}
