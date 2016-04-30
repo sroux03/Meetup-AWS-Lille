@@ -6,7 +6,7 @@
     "MyFirstCloudFormationServer" : {
         "Type" : "AWS::EC2::Instance",
         "Metadata" : {
-        	"Comment1" : "Get the motd file from S3 Bucket",
+        	"Comment1" : "Config sets in order to get the motd file from S3 Bucket",
 			"AWS::CloudFormation::Init" : {
 				"configSets" : {
 					"Run" : [ "Run" ]
@@ -24,7 +24,7 @@
 			}
 		},
 		"Properties" : {
-			"KeyName" : "defaultSRX",
+			"KeyName" : "<<CHANGE-ME>>",
         	"InstanceType" : "t2.micro",
 	    	"SubnetId" : "<<CHANGE-ME>>",
        		"ImageId"  : "<<CHANGE-ME>>",
