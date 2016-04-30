@@ -1,19 +1,19 @@
 {
  "AWSTemplateFormatVersion" : "2010-09-09",
- "Description" : "This CF Template will be used to deploy my sample application preprod and prod on 2 different AWS regions",
+ "Description" : "This CF Template will be used to deploy my sample application preprod and prod. It works on 2 different AWS regions, eu-west-1 and us-west-1",
  "Parameters" : {
   "Keyname": {
     "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance",
     "Type": "AWS::EC2::KeyPair::KeyName",
     "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
   },
-  "ProductionApplicationSizing" : {
+  "ProdApplicationSizing" : {
    "Description" : "Defines the sizing of the application.",
    "Type" : "String",
    "AllowedValues" : [ "XS","S","M","L","XL" ],
    "ConstraintDescription" : "Allowed values are : XS,S,M,L,XL"
   },
-  "PreproductionApplicationSizing" : {
+  "PreprodApplicationSizing" : {
    "Description" : "Defines the sizing of preproduction platform of the application.",
    "Type" : "String",
    "AllowedValues" : [ "XS","S","M","L","XL" ],
@@ -71,23 +71,63 @@
  			"AZa" : "us-west-1b",
  			"AZb" : "us-west-1c"
  		}
+ 	},
+ 	"AMIs" : {
+ 		"eu-west-1" : {
+ 			"OS" : "CentOS",
+ 			"id" : "ami-2de6f559"
+ 		},
+ 		"us-west-1" : {
+ 			"OS" : "CentOS",
+ 			"id" : "ami-5d456c18"
+ 		}
  	}
  },
  "Resources" : {
+ 	"InternetGW" : {
+		"Type" : "AWS::EC2::InternetGateway",
+		"Properties" : {
+      		"Tags" : [ { "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "DemoVPC" },{"Key" : "CIDR" ,"Value" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "CIDR" ]}}]
+   		}
+ 	},
  	"demoVPC" : {
 		"Type" : "AWS::EC2::VPC",
    			"Properties" : {
       		"CidrBlock" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "CIDR" ]},
-      		"Tags" : [ { "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "EUdemoVPC" },{"Key" : "CIDR" ,"Value" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "CIDR" ]}}]
+      		"Tags" : [ { "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "DemoVPC" },{"Key" : "CIDR" ,"Value" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "CIDR" ]}}]
    			}
 	},
+	"InternetGWAttachment" : {
+   		"Type" : "AWS::EC2::VPCGatewayAttachment",
+   		"DependsOn" : ["InternetGW", "demoVPC"],
+   		"Properties" : {
+      	"InternetGatewayId" : { "Ref" : "InternetGW" },
+      	"VpcId" : { "Ref" : "demoVPC" }
+   		}
+	},
+	"DefaultRouteTable" : {
+		"Type" : "AWS::EC2::RouteTable",
+		"DependsOn" : ["demoVPC"],
+   		"Properties" : {
+      		"VpcId" : { "Ref" : "demoVPC" },
+      		"Tags" : [ { "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "DemoVPC" }]
+   		}
+	},
+	"DefaultRoute" : {
+		"Type" : "AWS::EC2::Route",
+  		"Properties" : {
+    		"DestinationCidrBlock" : "0.0.0.0/0",
+    		"GatewayId" : { "Ref" : "InternetGW" },
+    		"RouteTableId" : { "Ref" : "DefaultRouteTable" }
+  		}
+	}, 
 	"DmzA" : {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : { 
 	    "AvailabilityZone" : { "Fn::FindInMap" : ["AZ",{ "Ref" : "AWS::Region" },"AZa"]},
         "CidrBlock" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzA" ]},
         "VpcId" : { "Ref" : "demoVPC"},
-        "Tags" : [{ "Key" : "Name", "Value" : "DmzA" },{ "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "EUdemoVPC" },{ "Key" : "Zone", "Value" : "DMZ" },{"Key" : "CIDR" ,"Value" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzA" ]}}]
+        "Tags" : [{ "Key" : "Name", "Value" : "DmzA" },{ "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Zone", "Value" : "DMZ" },{"Key" : "CIDR" ,"Value" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzA" ]}}]
       }
     },
 	"DmzB" : {
@@ -96,7 +136,7 @@
 	    "AvailabilityZone" : { "Fn::FindInMap" : ["AZ",{ "Ref" : "AWS::Region" },"AZb"]},
         "CidrBlock" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzB" ]},
         "VpcId" : { "Ref" : "demoVPC"},
-        "Tags" : [{ "Key" : "Name", "Value" : "DmzB" },{ "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "EUdemoVPC" },{ "Key" : "Zone", "Value" : "DMZ" },{"Key" : "CIDR" ,"Value" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzB" ]}}]
+        "Tags" : [{ "Key" : "Name", "Value" : "DmzB" },{ "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Zone", "Value" : "DMZ" },{"Key" : "CIDR" ,"Value" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzB" ]}}]
       }
     },
 	"BackA" : {
@@ -105,7 +145,7 @@
 	    "AvailabilityZone" : { "Fn::FindInMap" : ["AZ",{ "Ref" : "AWS::Region" },"AZa"]},
         "CidrBlock" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "BackA" ]},
         "VpcId" : { "Ref" : "demoVPC"},
-        "Tags" : [{ "Key" : "Name", "Value" : "BackA" },{ "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "EUdemoVPC" },{ "Key" : "Zone", "Value" : "BACK" },{"Key" : "CIDR" ,"Value" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "BackA" ]}}]
+        "Tags" : [{ "Key" : "Name", "Value" : "BackA" },{ "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Zone", "Value" : "BACK" },{"Key" : "CIDR" ,"Value" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "BackA" ]}}]
       }
     },
 	"BackB" : {
@@ -114,9 +154,99 @@
 	    "AvailabilityZone" : { "Fn::FindInMap" : ["AZ",{ "Ref" : "AWS::Region" },"AZb"]},
         "CidrBlock" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "BackB" ]},
         "VpcId" : { "Ref" : "demoVPC"},
-        "Tags" : [{ "Key" : "Name", "Value" : "BackB" },{ "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "EUdemoVPC" },{ "Key" : "Zone", "Value" : "BACK" },{"Key" : "CIDR" ,"Value" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "BackB" ]}}]
+        "Tags" : [{ "Key" : "Name", "Value" : "BackB" },{ "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Zone", "Value" : "BACK" },{"Key" : "CIDR" ,"Value" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "BackB" ]}}]
       }
-    }
+    },
+    "SgDmzServerPreprod" : {
+    	"Type" : "AWS::EC2::SecurityGroup",
+		"Properties" : {
+			"GroupDescription" : "Security group for Preprod Server",
+			"VpcId" : {"Ref" : "demoVPC"},
+        	"SecurityGroupIngress" : [ 
+        		{ "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80", "CidrIp" : "0.0.0.0/0"},
+        		{ "IpProtocol" : "tcp", "FromPort" : "22",  "ToPort" : "22", "CidrIp" : {"Ref" : "AdminGatewayIP"}}
+        	],
+			"SecurityGroupEgress" : [ 
+				{ "IpProtocol" : "tcp", "FromPort" : "3306",  "ToPort" : "3306", "CidrIp" :  { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzA"]}},
+				{ "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80", "CidrIp" : "0.0.0.0/0" }
+			],
+			"Tags" : [{ "Key" : "Name", "Value" : "SGDMZServerPreprod" }, { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Preprod" }]
+      	}	
+    },
+    "SgDmzServerProd" : {
+    	"Type" : "AWS::EC2::SecurityGroup",
+		"Properties" : {
+			"GroupDescription" : "Security group for Prod Servers",
+			"VpcId" : {"Ref" : "demoVPC"},
+        	"SecurityGroupIngress" : [
+        		{ "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80", "CidrIp" :  { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzA"]} },
+				{ "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80", "CidrIp" :  { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzB"]} },
+        		{ "IpProtocol" : "tcp", "FromPort" : "22",  "ToPort" : "22", "CidrIp" : {"Ref" : "AdminGatewayIP"}}
+        	],
+			"SecurityGroupEgress" : [ 
+				{ "IpProtocol" : "tcp", "FromPort" : "3306",  "ToPort" : "3306", "CidrIp" :  { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzA"]} },
+				{ "IpProtocol" : "tcp", "FromPort" : "3306",  "ToPort" : "3306", "CidrIp" :  { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzB"]} },
+				{ "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80", "CidrIp" : "0.0.0.0/0" }
+			],
+			"Tags" : [{ "Key" : "Name", "Value" : "SGDMZServerProd" }, { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Prod" }]
+      	}	
+    },
+    "SgDmzELBProd" : {
+    	"Type" : "AWS::EC2::SecurityGroup",
+		"Properties" : {
+			"GroupDescription" : "Security group for LB",
+			"VpcId" : {"Ref" : "demoVPC"},
+        	"SecurityGroupIngress" : [ 
+        		{ "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80", "CidrIp" : "0.0.0.0/0"}
+        	],
+			"SecurityGroupEgress" : [ 
+				{ "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80", "CidrIp" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzA"]} },
+				{ "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80", "CidrIp" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzB"]} }
+			],
+			"Tags" : [{ "Key" : "Name", "Value" : "SgDmzELBProd" }, { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Prod" }]
+      	}	
+    },
+    "SgBackDBPreprod" : {
+    	"Type" : "AWS::EC2::SecurityGroup",
+		"Properties" : {
+			"GroupDescription" : "Security group for preprod DB",
+			"VpcId" : {"Ref" : "demoVPC"},
+        	"SecurityGroupIngress" : [ 
+        		{ "IpProtocol" : "tcp", "FromPort" : "3306",  "ToPort" : "3306", "CidrIp" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzA"]}}
+        	],
+			"Tags" : [{ "Key" : "Name", "Value" : "SgBackDBPreprod" }, { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Preprod" }]
+      	}	
+    },  
+	"SgBackDBProd" : {
+    	"Type" : "AWS::EC2::SecurityGroup",
+		"Properties" : {
+			"GroupDescription" : "Security group for preprod DB",
+			"VpcId" : {"Ref" : "demoVPC"},
+        	"SecurityGroupIngress" : [ 
+        		{ "IpProtocol" : "tcp", "FromPort" : "3306",  "ToPort" : "3306", "CidrIp" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzA"]}},
+        		{ "IpProtocol" : "tcp", "FromPort" : "3306",  "ToPort" : "3306", "CidrIp" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzB"]}}
+        	],
+			"Tags" : [{ "Key" : "Name", "Value" : "SgBackDBProd" }, { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Prod" }]
+      	}	
+    },
+    "PreprodApacheServer" : {
+    	"Type" : "AWS::EC2::Instance",
+		"Properties" : {
+			"KeyName" : {"Ref": "Keyname"},
+        	"InstanceType" : { "Fn::FindInMap" : ["Sizing","WWW",{"Ref" : "PreprodApplicationSizing"}]},
+	    	"SubnetId" : {"Ref" : "DmzA"},
+       		"ImageId"  : { "Fn::FindInMap" : ["AMIs",{ "Ref" : "AWS::Region" },"id"]},
+        	"SecurityGroupIds" : [{"Ref" : "SgDmzServerPreprod"}],
+			"Tags" : [{ "Key" : "Name", "Value" : "PreprodApacheServer" }, { "Key" : "Rôle", "Value" : "WebServer" }, 
+			  { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" }],
+            "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+                                                                          "#!/bin/bash -xe\n",
+																		  "yum install -y httpd php php-mysql"
+							           							]]
+												}
+		}	
+	  }
+	} 
  }
  
 
