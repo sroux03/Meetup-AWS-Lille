@@ -1,0 +1,123 @@
+{
+ "AWSTemplateFormatVersion" : "2010-09-09",
+ "Description" : "This CF Template will be used to deploy my sample application preprod and prod on 2 different AWS regions",
+ "Parameters" : {
+  "Keyname": {
+    "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+    "Type": "AWS::EC2::KeyPair::KeyName",
+    "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
+  },
+  "ProductionApplicationSizing" : {
+   "Description" : "Defines the sizing of the application.",
+   "Type" : "String",
+   "AllowedValues" : [ "XS","S","M","L","XL" ],
+   "ConstraintDescription" : "Allowed values are : XS,S,M,L,XL"
+  },
+  "PreproductionApplicationSizing" : {
+   "Description" : "Defines the sizing of preproduction platform of the application.",
+   "Type" : "String",
+   "AllowedValues" : [ "XS","S","M","L","XL" ],
+   "ConstraintDescription" : "Allowed values are : XS,S,M,L,XL"
+  },
+  "AdminGatewayIP" : {
+  	"Description" : "Enter the IP from where you'll connect with SSH.",
+  	"Type" : "String",
+	"MinLength": "9",
+	"MaxLength": "18",
+    "Default": "85.68.148.121/32",
+    "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+    "ConstraintDescription": "must be a valid IP CIDR range."
+  }
+ },
+ "Mappings" : {
+ 	"Sizing" : {
+ 		"BDD" : {
+ 			"XS" : "db.t2.micro",
+ 			"S" : "db.t2.micro",
+ 			"M" : "db.t2.medium",
+ 			"L" : "db.m3.large",
+ 			"XL" : "db.m3.xlarge"
+ 		},
+ 		"WWW" : {
+ 			"XS" : "t2.nano",
+ 			"S" : "t2.micro",
+ 			"M" : "t2.small",
+ 			"L" : "m3.large",
+ 			"XL" : "m3.xlarge"
+ 		}
+ 	},
+ 	"PrivateScopes" : {
+ 		"eu-west-1" : {
+ 			"CIDR" : "172.20.0.0/16",
+ 			"DmzA" : "172.20.0.0/24",
+ 			"DmzB" : "172.20.1.0/24",
+ 			"BackA" : "172.20.2.0/24",
+ 			"BackB" : "172.20.3.0/24"
+ 		},
+ 		"us-west-1" : {
+ 			"CIDR" : "10.0.0.0/16",
+ 			"DmzA" : "10.0.0.0/24",
+ 			"DmzB" : "10.0.1.0/24",
+ 			"BackA" : "10.0.2.0/24",
+ 			"BackB" : "10.0.3.0/24"
+ 		}
+ 	},
+ 	"AZ" : {
+ 		"eu-west-1" : {
+ 			"AZa" : "eu-west-1b",
+ 			"AZb" : "eu-west-1c"	
+ 		},
+ 		"us-west-1" : {
+ 			"AZa" : "us-west-1b",
+ 			"AZb" : "us-west-1c"
+ 		}
+ 	}
+ },
+ "Resources" : {
+ 	"demoVPC" : {
+		"Type" : "AWS::EC2::VPC",
+   			"Properties" : {
+      		"CidrBlock" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "CIDR" ]},
+      		"Tags" : [ { "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "EUdemoVPC" },{"Key" : "CIDR" ,"Value" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "CIDR" ]}}]
+   			}
+	},
+	"DmzA" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : { 
+	    "AvailabilityZone" : { "Fn::FindInMap" : ["AZ",{ "Ref" : "AWS::Region" },"AZa"]},
+        "CidrBlock" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzA" ]},
+        "VpcId" : { "Ref" : "demoVPC"},
+        "Tags" : [{ "Key" : "Name", "Value" : "DmzA" },{ "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "EUdemoVPC" },{ "Key" : "Zone", "Value" : "DMZ" },{"Key" : "CIDR" ,"Value" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzA" ]}}]
+      }
+    },
+	"DmzB" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : { 
+	    "AvailabilityZone" : { "Fn::FindInMap" : ["AZ",{ "Ref" : "AWS::Region" },"AZb"]},
+        "CidrBlock" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzB" ]},
+        "VpcId" : { "Ref" : "demoVPC"},
+        "Tags" : [{ "Key" : "Name", "Value" : "DmzB" },{ "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "EUdemoVPC" },{ "Key" : "Zone", "Value" : "DMZ" },{"Key" : "CIDR" ,"Value" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzB" ]}}]
+      }
+    },
+	"BackA" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : { 
+	    "AvailabilityZone" : { "Fn::FindInMap" : ["AZ",{ "Ref" : "AWS::Region" },"AZa"]},
+        "CidrBlock" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "BackA" ]},
+        "VpcId" : { "Ref" : "demoVPC"},
+        "Tags" : [{ "Key" : "Name", "Value" : "BackA" },{ "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "EUdemoVPC" },{ "Key" : "Zone", "Value" : "BACK" },{"Key" : "CIDR" ,"Value" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "BackA" ]}}]
+      }
+    },
+	"BackB" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : { 
+	    "AvailabilityZone" : { "Fn::FindInMap" : ["AZ",{ "Ref" : "AWS::Region" },"AZb"]},
+        "CidrBlock" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "BackB" ]},
+        "VpcId" : { "Ref" : "demoVPC"},
+        "Tags" : [{ "Key" : "Name", "Value" : "BackB" },{ "Key" : "PROJECT", "Value" : "DemoMeetup" },{ "Key" : "VPC", "Value" : "EUdemoVPC" },{ "Key" : "Zone", "Value" : "BACK" },{"Key" : "CIDR" ,"Value" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "BackB" ]}}]
+      }
+    }
+ }
+ 
+
+}
