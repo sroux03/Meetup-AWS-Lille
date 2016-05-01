@@ -112,7 +112,7 @@
 		"VpcId" : "<<CHANGE-ME>>",
         "SecurityGroupIngress" : [ { "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80", "CidrIp" : "0.0.0.0/0"}],
 		"SecurityGroupEgress" : [ { "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80", "CidrIp" :  "0.0.0.0/0" }],
-		"Tags" : [{ "Key" : "Name", "Value" : "SG-ELB1" }, { "Key" : "Zone", "Value" : "default" },{ "Key" : "VPC", "Value" : "default" }]
+		"Tags" : [{ "Key" : "Name", "Value" : "SG-ELB1" }, { "Key" : "PROJECT", "Value" : "DemoMeetup" }, { "Key" : "Zone", "Value" : "default" },{ "Key" : "VPC", "Value" : "default" }]
       }
     },
     "ELB1" : {
@@ -136,7 +136,7 @@
      				"Interval" : "30",
      				"Timeout" : "5"
    			},
-   			"Tags" : [{ "Key" : "Name", "Value" : "ELB1" }, { "Key" : "Zone", "Value" : "default" },{ "Key" : "VPC", "Value" : "default" }]
+   			"Tags" : [{ "Key" : "Name", "Value" : "ELB1" }, { "Key" : "PROJECT", "Value" : "DemoMeetup" }, { "Key" : "Zone", "Value" : "default" },{ "Key" : "VPC", "Value" : "default" }]
  		}
 	},
     "ElasticIPAssociation1" : {

@@ -241,7 +241,7 @@
 				{ "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80", "CidrIp" : "0.0.0.0/0" },
 				{ "IpProtocol" : "tcp", "FromPort" : "443",  "ToPort" : "443", "CidrIp" : "0.0.0.0/0" }
 			],
-			"Tags" : [{ "Key" : "Name", "Value" : "SGDMZServerPreprod" }, { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Preprod" }]
+			"Tags" : [{ "Key" : "Name", "Value" : "SGDMZServerPreprod" }, { "Key" : "PROJECT", "Value" : "DemoMeetup" }, { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Preprod" }]
       	}	
     },
     "SgDmzServerProd" : {
@@ -260,7 +260,7 @@
 				{ "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80", "CidrIp" : "0.0.0.0/0" },
 				{ "IpProtocol" : "tcp", "FromPort" : "443",  "ToPort" : "443", "CidrIp" : "0.0.0.0/0" }
 			],
-			"Tags" : [{ "Key" : "Name", "Value" : "SGDMZServerProd" }, { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Prod" }]
+			"Tags" : [{ "Key" : "Name", "Value" : "SGDMZServerProd" }, { "Key" : "PROJECT", "Value" : "DemoMeetup" }, { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Prod" }]
       	}	
     },
     "SgDmzELBProd" : {
@@ -275,7 +275,7 @@
 				{ "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80", "CidrIp" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzA"]} },
 				{ "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80", "CidrIp" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzB"]} }
 			],
-			"Tags" : [{ "Key" : "Name", "Value" : "SgDmzELBProd" }, { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Prod" }]
+			"Tags" : [{ "Key" : "Name", "Value" : "SgDmzELBProd" }, { "Key" : "PROJECT", "Value" : "DemoMeetup" }, { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Prod" }]
       	}	
     },
     "SgBackDBPreprod" : {
@@ -286,7 +286,7 @@
         	"SecurityGroupIngress" : [ 
         		{ "IpProtocol" : "tcp", "FromPort" : "3306",  "ToPort" : "3306", "CidrIp" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzA"]}}
         	],
-			"Tags" : [{ "Key" : "Name", "Value" : "SgBackDBPreprod" }, { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Preprod" }]
+			"Tags" : [{ "Key" : "Name", "Value" : "SgBackDBPreprod" }, { "Key" : "PROJECT", "Value" : "DemoMeetup" }, { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Preprod" }]
       	}	
     },  
 	"SgBackDBProd" : {
@@ -298,7 +298,7 @@
         		{ "IpProtocol" : "tcp", "FromPort" : "3306",  "ToPort" : "3306", "CidrIp" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzA"]}},
         		{ "IpProtocol" : "tcp", "FromPort" : "3306",  "ToPort" : "3306", "CidrIp" : { "Fn::FindInMap" : [ "PrivateScopes", { "Ref" : "AWS::Region" }, "DmzB"]}}
         	],
-			"Tags" : [{ "Key" : "Name", "Value" : "SgBackDBProd" }, { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Prod" }]
+			"Tags" : [{ "Key" : "Name", "Value" : "SgBackDBProd" }, { "Key" : "PROJECT", "Value" : "DemoMeetup" }, { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Prod" }]
       	}	
     },
     "PreprodApacheServer" : {
@@ -309,7 +309,7 @@
 	    	"SubnetId" : {"Ref" : "DmzA"},
        		"ImageId"  : { "Fn::FindInMap" : ["AMIs",{ "Ref" : "AWS::Region" },"id"]},
         	"SecurityGroupIds" : [{"Ref" : "SgDmzServerPreprod"}],
-			"Tags" : [{ "Key" : "Name", "Value" : "PreprodApacheServer" }, { "Key" : "Role", "Value" : "WebServer" }, 
+			"Tags" : [{ "Key" : "Name", "Value" : "PreprodApacheServer" }, { "Key" : "PROJECT", "Value" : "DemoMeetup" }, { "Key" : "Role", "Value" : "WebServer" }, 
 			  { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Preprod" }],
             "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
                                                                           "#!/bin/bash -xe\n",
@@ -333,7 +333,7 @@
 	    	"SubnetId" : {"Ref" : "DmzA"},
        		"ImageId"  : { "Fn::FindInMap" : ["AMIs",{ "Ref" : "AWS::Region" },"id"]},
         	"SecurityGroupIds" : [{"Ref" : "SgDmzServerProd"}],
-			"Tags" : [{ "Key" : "Name", "Value" : "ProdApacheServer1" }, { "Key" : "Role", "Value" : "WebServer" }, 
+			"Tags" : [{ "Key" : "Name", "Value" : "ProdApacheServer1" }, { "Key" : "PROJECT", "Value" : "DemoMeetup" }, { "Key" : "Role", "Value" : "WebServer" }, 
 			  { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Prod" }],
             "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
                                                                           "#!/bin/bash -xe\n",
@@ -357,7 +357,7 @@
 	    	"SubnetId" : {"Ref" : "DmzB"},
        		"ImageId"  : { "Fn::FindInMap" : ["AMIs",{ "Ref" : "AWS::Region" },"id"]},
         	"SecurityGroupIds" : [{"Ref" : "SgDmzServerProd"}],
-			"Tags" : [{ "Key" : "Name", "Value" : "ProdApacheServer2" }, { "Key" : "Role", "Value" : "WebServer" }, 
+			"Tags" : [{ "Key" : "Name", "Value" : "ProdApacheServer2" }, { "Key" : "PROJECT", "Value" : "DemoMeetup" }, { "Key" : "Role", "Value" : "WebServer" }, 
 			  { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Prod" }],
             "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
                                                                           "#!/bin/bash -xe\n",
@@ -394,7 +394,7 @@
      				"Interval" : "30",
      				"Timeout" : "5"
    			},
-   			"Tags" : [{ "Key" : "Name", "Value" : "ProdELB" }, { "Key" : "Role", "Value" : "LoadBalancer" }, 
+   			"Tags" : [{ "Key" : "Name", "Value" : "ProdELB" }, { "Key" : "PROJECT", "Value" : "DemoMeetup" }, { "Key" : "Role", "Value" : "LoadBalancer" }, 
 			  { "Key" : "Zone", "Value" : "DMZ" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Prod" }]
  		}
 	},
@@ -421,7 +421,7 @@
         	"PubliclyAccessible" : "false",
         	"DBSubnetGroupName" : { "Ref" : "DBSubnetGroup" },
         	"VPCSecurityGroups" : [ { "Ref" : "SgBackDBPreprod" } ],
-        	"Tags" : [{ "Key" : "Name", "Value" : { "Ref" : "PreprodDBName"} }, { "Key" : "Rôle", "Value" : "DB" }, 
+        	"Tags" : [{ "Key" : "Name", "Value" : { "Ref" : "PreprodDBName"} }, { "Key" : "PROJECT", "Value" : "DemoMeetup" }, { "Key" : "Rôle", "Value" : "DB" }, 
 			  { "Key" : "Zone", "Value" : "Back" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Preprod" }]
         	
       }
@@ -441,7 +441,7 @@
         	"PubliclyAccessible" : "false",
         	"DBSubnetGroupName" : { "Ref" : "DBSubnetGroup" },
         	"VPCSecurityGroups" : [ { "Ref" : "SgBackDBProd" } ],
-        	"Tags" : [{ "Key" : "Name", "Value" : { "Ref" : "ProdDBName"}}, { "Key" : "Rôle", "Value" : "DB" }, 
+        	"Tags" : [{ "Key" : "Name", "Value" : { "Ref" : "ProdDBName"}}, { "Key" : "PROJECT", "Value" : "DemoMeetup" }, { "Key" : "Rôle", "Value" : "DB" }, 
 			  { "Key" : "Zone", "Value" : "Back" },{ "Key" : "VPC", "Value" : "demoVPC" },{ "Key" : "Environement", "Value" : "Prod" }]
         	
       }

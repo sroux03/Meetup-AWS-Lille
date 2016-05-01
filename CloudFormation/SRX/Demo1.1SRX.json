@@ -29,7 +29,7 @@
 	    		"SubnetId" : "subnet-77829900",
        			"ImageId"  : "ami-e1398992",
         		"SecurityGroupIds" : ["sg-e2d9d486"],
-				"Tags" : [{ "Key" : "Name", "Value" : "MyFirstCloudFormationServer" }, { "Key" : "Rôle", "Value" : "TestServer" }, 
+				"Tags" : [{ "Key" : "Name", "Value" : "MyFirstCloudFormationServer" }, { "Key" : "PROJECT", "Value" : "DemoMeetup" }, { "Key" : "Rôle", "Value" : "TestServer" }, 
 			  		{ "Key" : "Zone", "Value" : "default" },{ "Key" : "VPC", "Value" : "default" }],
 				"BlockDeviceMappings" : [ {
 				"DeviceName" : "/dev/sdb",

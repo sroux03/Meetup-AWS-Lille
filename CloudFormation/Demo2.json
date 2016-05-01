@@ -46,7 +46,7 @@
 	    	"SubnetId" : "<<CHANGE-ME>>",
        		"ImageId"  : "ami-e1398992",
         	"SecurityGroupIds" : ["<<CHANGE-ME>>"],
-			"Tags" : [{ "Key" : "Name", "Value" : "MyFirstCloudFormationServer" }, { "Key" : "Rôle", "Value" : "TestServer" }, 
+			"Tags" : [{ "Key" : "Name", "Value" : "MyFirstCloudFormationServer" }, { "Key" : "PROJECT", "Value" : "DemoMeetup" }, { "Key" : "Rôle", "Value" : "TestServer" }, 
 			  { "Key" : "Zone", "Value" : "default" },{ "Key" : "VPC", "Value" : "default" }],
             "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
                                                                           "#!/bin/bash -xe\n",
