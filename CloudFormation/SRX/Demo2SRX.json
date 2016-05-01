@@ -43,7 +43,7 @@
 		"Properties" : {
 			"KeyName" : "defaultSRX",
         	"InstanceType" : "t2.micro",
-	    	"SubnetId" : "subnet-c4f0e9b3",
+	    	"SubnetId" : "subnet-77829900",
        		"ImageId"  : "ami-e1398992",
         	"SecurityGroupIds" : ["sg-e2d9d486"],
 			"Tags" : [{ "Key" : "Name", "Value" : "MyFirstCloudFormationServer" }, { "Key" : "PROJECT", "Value" : "DemoMeetup" }, { "Key" : "Rôle", "Value" : "TestServer" }, 
